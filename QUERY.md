@@ -69,7 +69,7 @@ app.use(pages());
 export default app;
 ```
 
-`cf()` is Cloudflare setup, not an Astro stage. After it, a redirect returns before cache, i18n, and middleware. `i18n()` is registered before `middleware()`, so it post-processes the page and still sits inside `cache()`. `pages()` is last.
+`cf()` comes from `@astrojs/cloudflare/hono`. `astro()` does not call it. The worker entry needs it, and the Cloudflare guide starts the same way. The order to check is the eight handlers after it. A redirect returns before cache, i18n, and middleware. `i18n()` is registered before `middleware()`, so it post-processes the page and still sits inside `cache()`. `pages()` is last.
 
 On `pnpm reproduce`:
 
@@ -86,6 +86,8 @@ Cloudflare sessions need a KV binding. This project sets `session: false`, so `s
 [PR #18265](https://github.com/withastro/astro/pull/18265) adds `notFound()`. `astro@7.3.6` does not export it, so it is not here. In `handleRequest` that step is after the trailing-slash check and before the rest of rendering. The docs can add it when the PR lands.
 
 ## Link to Minimal Reproducible Example
+
+https://github.com/iseraph-dev/astro-handler-order-repro
 
 ```sh
 pnpm install
